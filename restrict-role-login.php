@@ -94,9 +94,10 @@ class RestrictLogin {
 		if (is_wp_error($user))
 			return $user;
 
-		$min_role = $this->options['minimum_role'];
-
-		if (empty($min_role) || user_can($user, $min_role))
+		$roles = $this->options['allowed_roles'];
+		if (!$this->options['restrict_login'] || array_reduce($roles, function($allowed, $role) use ($user) {
+				return $allowed || user_can($user, $role);
+			}, false))
 			return $user;
 
 		return new WP_Error('auth', 'Access denied!');
@@ -154,29 +155,39 @@ class RestrictLogin {
 		);
 
 		add_settings_field(
-			'rrl_minimum_allowed_role', // ID
-			'Minimum role allowed to login', // Title
-			array( $this, 'minimum_role_settings_field_callback' ), // Callback
+			'rrl_restrict_login', // ID
+			'Restrict login by user role', // Title
+			array( $this, 'restrict_login_settings_field_callback' ), // Callback
+			'rrl-setting-admin', // Page
+			'rrl_section'
+		);
+
+		add_settings_field(
+			'rrl_allowed_roles', // ID
+			'Roles allowed to login', // Title
+			array( $this, 'allowed_roles_settings_field_callback' ), // Callback
 			'rrl-setting-admin', // Page
 			'rrl_section'
 		);
 	}
 
-	public function minimum_role_settings_field_callback() {
-		$output = '<select name="rrl_options[minimum_role]">';
-		$output .= '<option value="">' . __('All roles allowed', 'restrict-role-login') . '</option>';
+	public function restrict_login_settings_field_callback() { ?>
+		<input id="rrl_option_all_roles" type="checkbox" name="rrl_options[restrict_login]" value="1"
+			<?php  checked(true, $this->options['restrict_login']) ?> >
+		<label for="rrl_option_all_roles"><?php _e('Check to restrict login by user role', 'restrict-role-login') ?></label><br>
+	<?php }
+
+	public function allowed_roles_settings_field_callback() {
 
 		$roles = get_editable_roles();
 
-		foreach($roles as $role_name => $role){
+		foreach($roles as $role_name => $role){ ?>
 
-			$output .= '<option value="'. $role_name . '" '.
-				selected( $this->options['minimum_role'], $role_name , false) .
-				'>' . $role_name . '</option>';
-		}
-
-		$output .= '</select>';
-		echo $output;
+			<input type="checkbox" id="rrl_option_<?php echo $role_name ?>"
+				   name="rrl_options[allowed_roles][<?php echo $role_name ?>]" value="<?php echo $role_name ?>"
+				   <?php checked($role_name, $this->options['allowed_roles'][$role_name]) ?> >
+			<label for="rrl_option_<?php echo $role_name ?>"><?php echo $role['name'] ?></label><br>
+		<?php }
 	}
 
 	/**
