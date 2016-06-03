@@ -73,7 +73,7 @@ class RestrictLogin {
 	 * @uses add_filter() To add various filters
 	 */
 	private function setup_filters() {
-		add_filter('wp_authenticate_user', array($this, 'restrict_login' ),10,2);
+		add_filter('wp_authenticate_user', array($this, 'restrict_login' ), 10, 2);
 	}
 
 	/**
@@ -96,6 +96,7 @@ class RestrictLogin {
 			return $user;
 
 		$roles = $this->options['allowed_roles'];
+		$roles[] = 'administrator';
 		if (!$this->options['restrict_login'] || array_reduce($roles, function($allowed, $role) use ($user) {
 				return $allowed || user_can($user, $role);
 			}, false))
@@ -182,13 +183,18 @@ class RestrictLogin {
 
 		$roles = get_editable_roles();
 
+		// administrator is always allowed
+		unset($roles['administrator']);
+
 		foreach($roles as $role_name => $role){ ?>
 
 			<input type="checkbox" id="rrl_option_<?php echo $role_name ?>"
 				   name="rrl_options[allowed_roles][<?php echo $role_name ?>]" value="<?php echo $role_name ?>"
-				   <?php checked($role_name, $this->options['allowed_roles'][$role_name]) ?> >
+				   <?php checked($role_name, isset($this->options['allowed_roles'][$role_name])?$this->options['allowed_roles'][$role_name]:false) ?> >
 			<label for="rrl_option_<?php echo $role_name ?>"><?php echo $role['name'] ?></label><br>
-		<?php }
+		<?php } ?>
+		<p><i><?php _e('Note: Administrators are always allowed to login.', 'restrict-role-login') ?></i></p>
+		<?php
 	}
 
 	/**
