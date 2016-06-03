@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name: Restrict Role Login
- * Plugin URI: http://lab.konnektiv.de/giz/wp-plugins/restrict-role-login
- * Description: Allows administrators to restrict user login based on roles.
- * Version: 0.0.1
+ * Plugin URI: https://wordpress.org/plugins/restrict-role-login/
+ * Description: Allows administrators to restrict user login based on user roles.
+ * Version: 1.0.0
  * Author: Konnektiv
  * Author URI: http://konnektiv.de/
- * License: GPLv2 (license.txt)
+ * License: GNU AGPLv3 (license.txt)
+ * Text Domain: restrict-role-login
  */
 
 // Exit if accessed directly
@@ -25,7 +26,7 @@ class RestrictLogin {
 	 * Insures that only one instance of RestrictLogin exists in memory at
 	 * any one time. Also prevents needing to define globals all over the place.
 	 *
-	 * @since RestrictLogin (0.0.1)
+	 * @since RestrictLogin (1.0.0)
 	 *
 	 * @staticvar array $instance
 	 *
@@ -45,7 +46,7 @@ class RestrictLogin {
 	/**
 	 * A dummy constructor to prevent loading more than one instance
 	 *
-	 * @since RestrictLogin (0.0.1)
+	 * @since RestrictLogin (1.0.0)
 	 */
 	private function __construct() { /* Do nothing here */
 	}
@@ -54,7 +55,7 @@ class RestrictLogin {
 	/**
 	 * Component global variables
 	 *
-	 * @since RestrictLogin (0.0.1)
+	 * @since RestrictLogin (1.0.0)
 	 * @access private
 	 *
 	 */
@@ -65,7 +66,7 @@ class RestrictLogin {
 	/**
 	 * Setup the filters
 	 *
-	 * @since RestrictLogin (0.0.1)
+	 * @since RestrictLogin (1.0.0)
 	 * @access private
 	 *
 	 * @uses remove_filter() To remove various filters
@@ -78,7 +79,7 @@ class RestrictLogin {
 	/**
 	 * Setup the actions
 	 *
-	 * @since RestrictLogin (0.0.1)
+	 * @since RestrictLogin (1.0.0)
 	 * @access private
 	 *
 	 * @uses remove_action() To remove various actions
@@ -100,7 +101,7 @@ class RestrictLogin {
 			}, false))
 			return $user;
 
-		return new WP_Error('auth', 'Access denied!');
+		return new WP_Error( 'auth', __('Access denied!', 'restrict-role-login' ) );
 	}
 
 	/**
