@@ -16,6 +16,8 @@ if ( !defined( 'ABSPATH' ) ) exit;
 class RestrictLogin {
 
 	/**
+	 *
+	 *
 	 * @var RestrictLogin
 	 */
 	private static $instance;
@@ -73,7 +75,7 @@ class RestrictLogin {
 	 * @uses add_filter() To add various filters
 	 */
 	private function setup_filters() {
-		add_filter('wp_authenticate_user', array($this, 'restrict_login' ), 10, 2);
+		add_filter( 'wp_authenticate_user', array( $this, 'restrict_login' ), 10, 2 );
 	}
 
 	/**
@@ -90,19 +92,19 @@ class RestrictLogin {
 		add_action( 'admin_init', array( $this, 'init_settings_page' ) );
 	}
 
-	function restrict_login($user, $password) {
+	function restrict_login( $user, $password ) {
 
-		if (is_wp_error($user))
+		if ( is_wp_error( $user ) )
 			return $user;
 
 		$roles = $this->options['allowed_roles'];
 		$roles[] = 'administrator';
-		if (!$this->options['restrict_login'] || array_reduce($roles, function($allowed, $role) use ($user) {
-				return $allowed || user_can($user, $role);
-			}, false))
+		if ( !$this->options['restrict_login'] || array_reduce( $roles, function( $allowed, $role ) use ( $user ) {
+					return $allowed || user_can( $user, $role );
+				}, false ) )
 			return $user;
 
-		return new WP_Error( 'auth', __('Access denied!', 'restrict-role-login' ) );
+		return new WP_Error( 'auth', __( 'Access denied!', 'restrict-role-login' ) );
 	}
 
 	/**
@@ -122,18 +124,17 @@ class RestrictLogin {
 	/**
 	 * Options page callback
 	 */
-	public function create_settings_page()
-	{
-		?>
+	public function create_settings_page() {
+?>
 		<div class="wrap">
 			<h2>Restrict role login Settings</h2>
 			<form method="post" action="options.php">
 				<?php
-				// This prints out all hidden setting fields
-				settings_fields( 'restrict_role_login_option_group' );
-				do_settings_sections( 'rrl-setting-admin' );
-				submit_button();
-				?>
+		// This prints out all hidden setting fields
+		settings_fields( 'restrict_role_login_option_group' );
+		do_settings_sections( 'rrl-setting-admin' );
+		submit_button();
+?>
 			</form>
 		</div>
 	<?php
@@ -175,8 +176,8 @@ class RestrictLogin {
 
 	public function restrict_login_settings_field_callback() { ?>
 		<input id="rrl_option_all_roles" type="checkbox" name="rrl_options[restrict_login]" value="1"
-			<?php  checked(true, $this->options['restrict_login']) ?> >
-		<label for="rrl_option_all_roles"><?php _e('Check to restrict login by user role', 'restrict-role-login') ?></label><br>
+			<?php  checked( true, $this->options['restrict_login'] ) ?> >
+		<label for="rrl_option_all_roles"><?php _e( 'Check to restrict login by user role', 'restrict-role-login' ) ?></label><br>
 	<?php }
 
 	public function allowed_roles_settings_field_callback() {
@@ -184,27 +185,26 @@ class RestrictLogin {
 		$roles = get_editable_roles();
 
 		// administrator is always allowed
-		unset($roles['administrator']);
+		unset( $roles['administrator'] );
 
-		foreach($roles as $role_name => $role){ ?>
+		foreach ( $roles as $role_name => $role ) { ?>
 
 			<input type="checkbox" id="rrl_option_<?php echo $role_name ?>"
 				   name="rrl_options[allowed_roles][<?php echo $role_name ?>]" value="<?php echo $role_name ?>"
-				   <?php checked($role_name, isset($this->options['allowed_roles'][$role_name])?$this->options['allowed_roles'][$role_name]:false) ?> >
+				   <?php checked( $role_name, isset( $this->options['allowed_roles'][$role_name] )?$this->options['allowed_roles'][$role_name]:false ) ?> >
 			<label for="rrl_option_<?php echo $role_name ?>"><?php echo $role['name'] ?></label><br>
 		<?php } ?>
-		<p><i><?php _e('Note: Administrators are always allowed to login.', 'restrict-role-login') ?></i></p>
+		<p><i><?php _e( 'Note: Administrators are always allowed to login.', 'restrict-role-login' ) ?></i></p>
 		<?php
 	}
 
 	/**
 	 * Sanitize each setting field as needed
 	 *
-	 * @param array $input Contains all settings fields as array keys
+	 * @param array   $input Contains all settings fields as array keys
 	 * @return array
 	 */
-	public function sanitize( $input )
-	{
+	public function sanitize( $input ) {
 		return $input;
 	}
 }
