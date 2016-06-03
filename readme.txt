@@ -1,7 +1,7 @@
 === Restrict Role Login ===
 
 Contributors: konnektiv, chherbst
-Tags: authentication, role, restrict, register, sign-in, sign-up, login, area, plugin
+Tags: authentication, role, restrict, register, sign-in, sign-up, login, area, user, users, plugin
 Requires at least: WordPress 3.6.0
 Tested up to: 4.5.2
 Stable tag: 1.0.0
