@@ -14,6 +14,8 @@ Allows administrators to restrict user login based on user roles.
 
 This Plugin allows administrators to restrict user login based on user roles. This is useful e.g. when you want anyone to register on your site but you do only want certain people (e.g. editors) to enter the logged in area.
 
+Roles that are allowed to log in are set in a new menu entry in the Users menu.
+
 This plugin was originally developed for the [globe - Community of Digital Learning](https://quality4digitallearning.org/) on behalf of [GIZ](https://www.giz.de/).
 
 = Contact =
