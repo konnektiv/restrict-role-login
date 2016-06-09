@@ -102,7 +102,7 @@ class RestrictLogin {
 
 		$roles   = $this->options['allowed_roles'];
 		$roles[] = 'administrator';
-		if ( ! $this->options['restrict_login'] || array_reduce( $roles, function ( $allowed, $role ) use ( $user ) {
+		if ( ! isset( $this->options['restrict_login'] ) || ! $this->options['restrict_login'] || array_reduce( $roles, function ( $allowed, $role ) use ( $user ) {
 				return $allowed || user_can( $user, $role );
 			}, false )
 		) {
@@ -181,7 +181,7 @@ class RestrictLogin {
 
 	public function restrict_login_settings_field_callback() { ?>
 		<input id="rrl_option_all_roles" type="checkbox" name="rrl_options[restrict_login]" value="1"
-			<?php checked( true, $this->options['restrict_login'] ) ?> >
+			<?php checked( isset( $this->options['restrict_login'] ) && $this->options['restrict_login'] ) ?> >
 		<label
 			for="rrl_option_all_roles"><?php _e( 'Check to restrict login by user role', 'restrict-role-login' ) ?></label>
 		<br>
